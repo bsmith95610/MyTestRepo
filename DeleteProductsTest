@@ -1,0 +1,23 @@
+global class deleteProductsBatch implements Database.Batchable<sObject>
+{
+    global Database.QueryLocator start(Database.BatchableContext BC)
+    {
+        String query = 'SELECT Id FROM Product2';
+        return Database.getQueryLocator(query);
+    }
+   
+    global void execute(Database.BatchableContext BC, List<Product2> scope)
+    {
+        Delete scope;
+    }   
+    global void finish(Database.BatchableContext BC)
+    {
+        //Send an email to the User after your batch completes
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        String[] toAddresses = new String[] {'test@test.com'};
+        mail.setToAddresses(toAddresses);
+        mail.setSubject('Apex Batch Job is done products deleted');
+        mail.setPlainTextBody('The batch Apex job processed');
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+    }
+}
